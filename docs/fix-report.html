@@ -39,7 +39,7 @@
 
 <div class="summary">
   <p><strong>Summary.</strong> Before this work, anyone on the internet could read, change or delete every user's notes without logging in, and the app handed every visitor a key that controls the whole database. Both problems are fixed, along with sign-up and error handling. Privacy is now enforced by the database itself, and 15 automated tests check it on every change.</p>
-  <p><strong>Three things still need you:</strong> replace the leaked key and update two settings in Supabase (see "What you need to do").</p>
+  <p><strong>Two things still need you:</strong> replace the leaked key and set your site address in Supabase (see "What you need to do").</p>
 </div>
 
 <h2>What was wrong, and where it stands</h2>
@@ -70,8 +70,7 @@
     <h2>What you need to do</h2>
     <ol>
       <li><strong>Replace the leaked key.</strong> In Supabase, generate a new service-role key and save it as <code>SUPABASE_SERVICE_ROLE_KEY</code> on your host. The old one was public, so it must be treated as stolen.</li>
-      <li><strong>Set your site address</strong> in Supabase under Authentication &rarr; URL Configuration, so email links point to your site.</li>
-      <li><strong>Paste the new confirmation email</strong> (included) under Authentication &rarr; Email Templates.</li>
+      <li><strong>Set your site address</strong> in Supabase under Authentication &rarr; URL Configuration, so the links in confirmation emails point to your site instead of a developer's computer.</li>
     </ol>
   </div>
 </div>

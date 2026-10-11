@@ -138,10 +138,11 @@ where it should return to.
 
 **Test:** `a new user can sign up, confirm by email, and land in the app signed in`.
 
-**Fix:** the form says "Check your email." The email template links to the app's own
-`/auth/confirm` route, which verifies the one-time token on the server, sets the session
-cookie, and redirects to `/notes`. This needs the project's Site URL set to the real domain
-(see the deploy checklist in the README).
+**Fix:** the form says "Check your email." Sign-up tells Supabase to send the user back to
+the app's own `/auth/confirm` route, which exchanges the one-time code for a session cookie
+on the server and redirects to `/notes`. If the link is opened in a different browser, the
+email is still confirmed and the login page says so. This needs the project's Site URL set
+to the real domain (see the deploy checklist in the README).
 
 ## 6. Failures are silent (Low)
 

@@ -74,7 +74,7 @@ exists._
 | 2. Service-role key in the browser               | Key is server-only and used in one module, for one job; `server-only` fails the build if that changes |
 | 3. Notes open by URL, even signed out            | Server-rendered pages behind middleware; other people's notes are "not found"                         |
 | 4. Browser decides who owns a note               | `user_id` defaults to `auth.uid()`, `NOT NULL`, foreign key with cascade; the app stops sending it    |
-| 5. Sign-up strands new users                     | "Check your email" message; `/auth/confirm` verifies the link on the server and signs the user in     |
+| 5. Sign-up strands new users                     | "Check your email" message; `/auth/confirm` exchanges the emailed code on the server and signs in     |
 | 6. Silent failures                               | Form errors and pending states; loading, empty, error and not-found states                            |
 
 The migration is the part to read first:
@@ -105,10 +105,9 @@ Code alone does not finish the job. In the Supabase dashboard:
 
 1. **Rotate the service-role key** if the old one was ever in a public build, then set the
    new one as `SUPABASE_SERVICE_ROLE_KEY` on the server only.
-2. **Authentication > URL Configuration:** set Site URL to the real domain.
-3. **Authentication > Email Templates > Confirm signup:** paste
-   [`supabase/templates/confirmation.html`](https://github.com/coltonpomeroy/supabase-rls-rescue/blob/fix/auth-and-rls/supabase/templates/confirmation.html).
-4. Run the migration (`supabase db push`), then check the `notes_orphaned` table for rows
+2. **Authentication > URL Configuration:** set Site URL to the real domain, so confirmation
+   links come back to it. (`supabase config push` does this from `supabase/config.toml`.)
+3. Run the migration (`supabase db push`), then check the `notes_orphaned` table for rows
    that had no valid owner.
 
 ## Stack
