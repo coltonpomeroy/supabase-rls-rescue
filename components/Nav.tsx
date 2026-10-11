@@ -22,7 +22,7 @@ export default async function Nav() {
             <Link href="/settings" className="text-slate-700 hover:text-slate-900">
               Settings
             </Link>
-            <span className="hidden text-slate-500 sm:inline">{user.email}</span>
+            <span className="hidden text-slate-500 sm:inline">{user.is_anonymous ? "Demo account" : user.email}</span>
             <form action={logOut}>
               <button type="submit" className="rounded-md border border-slate-300 px-3 py-1 hover:bg-slate-50">
                 Log out

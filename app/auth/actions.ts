@@ -58,6 +58,18 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   return { message: "Check your email. We sent a link to confirm your address." };
 }
 
+/**
+ * "Try the demo": creates a throwaway account with no email (Supabase anonymous sign-in).
+ * An anonymous user still gets a real user id and the `authenticated` role, so the same
+ * Row Level Security policies apply and each visitor sees only their own notes.
+ */
+export async function tryDemo() {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInAnonymously();
+  if (error) redirect("/login?notice=demo-unavailable");
+  redirect("/notes");
+}
+
 export async function logOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();

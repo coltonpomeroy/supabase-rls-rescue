@@ -11,7 +11,9 @@ export default async function LoginPage({ searchParams }: Props) {
   const initialState =
     notice === "confirm"
       ? { message: "If you just confirmed your email, you're all set. Log in to continue." }
-      : null;
+      : notice === "demo-unavailable"
+        ? { error: "The demo is busy right now. Please try again in a few minutes, or log in." }
+        : null;
 
   return (
     <div className="mx-auto max-w-sm">
