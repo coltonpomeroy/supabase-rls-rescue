@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { GENERIC_ERROR, type FormState } from "@/lib/form";
 import { createClient } from "@/lib/supabase/server";
@@ -33,8 +34,15 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   if (!email) return { error: "Enter your email." };
   if (password.length < 8) return { error: "Use a password of at least 8 characters.", email };
 
+  // Send the confirmation link back to the site the user is actually on. Supabase only
+  // honours this if it matches the project's Site URL or its redirect allow-list.
+  const origin = (await headers()).get("origin");
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: origin ? { emailRedirectTo: `${origin}/auth/confirm` } : undefined,
+  });
   if (error) {
     if (error.code === "weak_password") return { error: "Choose a stronger password.", email };
     if (error.code === "over_email_send_rate_limit") {

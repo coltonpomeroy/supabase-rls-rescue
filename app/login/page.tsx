@@ -2,13 +2,15 @@ import Link from "next/link";
 import AuthForm from "@/components/AuthForm";
 import { logIn } from "@/app/auth/actions";
 
-type Props = { searchParams: Promise<{ error?: string }> };
+type Props = { searchParams: Promise<{ notice?: string }> };
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { error } = await searchParams;
+  const { notice } = await searchParams;
+  // Arriving from a confirmation link that could not sign the user in automatically
+  // (opened in a different browser, or already used).
   const initialState =
-    error === "confirmation"
-      ? { error: "That confirmation link is invalid or has expired. Log in, or sign up again to get a new one." }
+    notice === "confirm"
+      ? { message: "If you just confirmed your email, you're all set. Log in to continue." }
       : null;
 
   return (

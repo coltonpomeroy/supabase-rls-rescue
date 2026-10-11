@@ -255,12 +255,6 @@ otp_expiry = 3600
 # subject = "Your password has been changed"
 # content_path = "./templates/password_changed_notification.html"
 
-# Confirmation emails link to the app's own /auth/confirm route (see app/auth/confirm).
-# On a hosted project, paste the same template into Authentication > Email Templates.
-[auth.email.template.confirmation]
-subject = "Confirm your Huddle Notes email"
-content_path = "./supabase/templates/confirmation.html"
-
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
 enable_signup = false
@@ -418,3 +412,22 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# Hosted demo project. `supabase config push --project-ref <id>` applies the settings above
+# to it, with these overrides so the hosted defaults are kept where local ones are looser.
+[remotes.demo]
+project_id = "tyfkwlmfmeycehmhxkxf"
+
+[remotes.demo.auth]
+site_url = "https://rls-demo.coltonpomeroy.com"
+
+[remotes.demo.auth.rate_limit]
+sign_in_sign_ups = 30
+
+[remotes.demo.auth.email]
+max_frequency = "1m0s"
+otp_length = 8
+
+[remotes.demo.auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
