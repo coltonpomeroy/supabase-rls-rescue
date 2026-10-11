@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Fix report: Huddle Notes</title>
+<style>
+  @page { size: Letter; margin: 0.5in 0.6in; }
+  * { box-sizing: border-box; }
+  body { font: 9.1pt/1.38 -apple-system, "Helvetica Neue", Arial, sans-serif; color: #1a1d24; margin: 0; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #4f46e5; padding-bottom: 6pt; }
+  h1 { font-size: 17pt; margin: 0; letter-spacing: -0.01em; }
+  .meta { font-size: 8.4pt; color: #5b6272; text-align: right; }
+  .demo { display: inline-block; font-size: 7.6pt; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #4338ca; margin-bottom: 3pt; }
+  h2 { font-size: 10.2pt; margin: 9pt 0 3pt; color: #4338ca; }
+  p { margin: 0 0 5pt; }
+  table { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+  th, td { text-align: left; vertical-align: top; padding: 3.6pt 6pt; border-bottom: 1px solid #e3e5ec; }
+  th { font-size: 7.8pt; text-transform: uppercase; letter-spacing: 0.04em; color: #5b6272; }
+  .sev { font-weight: 700; white-space: nowrap; }
+  .crit { color: #b42318; } .high { color: #b54708; } .med { color: #8a6100; } .low { color: #475467; }
+  .ok { color: #067647; font-weight: 700; white-space: nowrap; }
+  ol, ul { margin: 0; padding-left: 15pt; }
+  li { margin-bottom: 2.4pt; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20pt; }
+  .summary { background: #f4f5fb; border-radius: 6pt; padding: 7pt 10pt; margin-top: 9pt; }
+  .summary p:last-child { margin: 0; }
+  code { font: 8.4pt ui-monospace, Menlo, monospace; background: #eef0f5; padding: 0 2pt; border-radius: 2pt; }
+  footer { margin-top: 9pt; padding-top: 5pt; border-top: 1px solid #e3e5ec; font-size: 7.8pt; color: #5b6272; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <span class="demo">Personal demo project &middot; sample app and data</span>
+    <h1>Fix report: Huddle Notes</h1>
+  </div>
+  <div class="meta">Security and sign-in review<br />Next.js + Supabase &middot; October 2026</div>
+</header>
+
+<div class="summary">
+  <p><strong>Summary.</strong> Before this work, anyone on the internet could read, change or delete every user's notes without logging in, and the app handed every visitor a key that controls the whole database. Both problems are fixed, along with sign-up and error handling. Privacy is now enforced by the database itself, and 15 automated tests check it on every change.</p>
+  <p><strong>Three things still need you:</strong> replace the leaked key and update two settings in Supabase (see "What you need to do").</p>
+</div>
+
+<h2>What was wrong, and where it stands</h2>
+<table>
+  <thead><tr><th>Risk</th><th>What it meant for your users</th><th>What was done</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td class="sev crit">Critical</td><td>Anyone could read, edit or delete any user's notes. No account needed.</td><td>The database now checks every request and returns only the signed-in user's own notes.</td><td class="ok">Fixed</td></tr>
+    <tr><td class="sev crit">Critical</td><td>The master database key was included in the website's code, where any visitor could copy it.</td><td>The key now stays on the server and is used for one task only (deleting your own account).</td><td class="ok">Fixed*</td></tr>
+    <tr><td class="sev high">High</td><td>Changing the number in a note's web address opened someone else's note, even when logged out.</td><td>Other people's notes now show "Note not found". Logged-out visitors are sent to the login page.</td><td class="ok">Fixed</td></tr>
+    <tr><td class="sev med">Medium</td><td>A user could save a note into another person's account.</td><td>The database, not the browser, now decides who owns each note.</td><td class="ok">Fixed</td></tr>
+    <tr><td class="sev med">Medium</td><td>New users were dropped on the login page with no explanation, and the confirmation email did not bring them into the app.</td><td>Sign-up now says "Check your email", and the link signs the user in and opens their notes.</td><td class="ok">Fixed*</td></tr>
+    <tr><td class="sev low">Low</td><td>Errors showed nothing: a wrong password looked the same as a broken site.</td><td>Clear error messages, plus loading and "no notes yet" screens.</td><td class="ok">Fixed</td></tr>
+  </tbody>
+</table>
+<p style="font-size:8pt;color:#5b6272;margin-top:3pt">* Complete in the code. Needs the matching step under "What you need to do" on the live project.</p>
+
+<div class="cols">
+  <div>
+    <h2>How you know it works</h2>
+    <ul>
+      <li>The same 15 tests were run before and after. <strong>Before: 4 passed, 11 failed. After: 15 passed.</strong></li>
+      <li>Five of them act like an attacker: they skip the website and ask the database directly, using a second user's login or no login at all. They pass only when the database refuses.</li>
+      <li>The tests run automatically on every future code change, so this cannot quietly break again.</li>
+      <li>Everything that worked before still works: logging in, writing, editing and deleting your own notes, deleting your account.</li>
+    </ul>
+  </div>
+  <div>
+    <h2>What you need to do</h2>
+    <ol>
+      <li><strong>Replace the leaked key.</strong> In Supabase, generate a new service-role key and save it as <code>SUPABASE_SERVICE_ROLE_KEY</code> on your host. The old one was public, so it must be treated as stolen.</li>
+      <li><strong>Set your site address</strong> in Supabase under Authentication &rarr; URL Configuration, so email links point to your site.</li>
+      <li><strong>Paste the new confirmation email</strong> (included) under Authentication &rarr; Email Templates.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="cols">
+  <div>
+    <h2>What changed for your data</h2>
+    <p>No notes were deleted. Any note that had no valid owner was moved to a locked holding table (<code>notes_orphaned</code>) for you to review, because it could not safely be shown to anyone.</p>
+  </div>
+  <div>
+    <h2>Not covered</h2>
+    <p>Password reset (the app does not have one yet), limits on repeated login attempts, two-step login, and a review of your hosting settings. None are urgent; password reset is the one users will ask for first.</p>
+  </div>
+</div>
+
+<footer>Full technical detail: docs/AUDIT.md (each issue with steps to reproduce) and the pull request "Fix auth and Row Level Security". This report describes a demo project built to show the process; it is not a client engagement.</footer>
+</body>
+</html>
