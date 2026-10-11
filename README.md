@@ -3,6 +3,9 @@
 **Personal demo project.** Not client work. "Huddle Notes" is a made-up notes app, and all
 data in it is sample data.
 
+**Live demo (fixed build):** <https://rls-demo.coltonpomeroy.com>. Click "Try the demo" for a
+private, temporary account with no email.
+
 ![Before the fix, Bob opens Alice's private note by changing the number in the URL](docs/screenshots/before-bob-opens-alice-note.png)
 
 _Before: signed in as Bob, changing the number in the URL opens Alice's note, with working
@@ -56,6 +59,10 @@ Same 15 tests, same local Supabase stack, both branches.
 | A user can still add, edit and delete their own notes             | pass   | pass |
 | Deleting an account removes the user and their notes              | pass   | pass |
 | **Total**                                                         | **4 / 15** | **15 / 15** |
+
+The fix branch also has three tests of its own for the demo button
+(`tests/demo.spec.ts`), so its CI run shows 18 passing. They check that a demo visitor's
+throwaway account is isolated like any other user's.
 
 The "straight to the API" tests matter most. They skip the app and talk to Supabase with
 Bob's own login token, which is what an attacker would do, so they pass only if the database
