@@ -68,6 +68,7 @@ test.describe("account deletion", () => {
     await expect(page.getByRole("link", { name: /Soon to be gone/ })).toBeVisible();
 
     await page.goto("/settings");
+    await expect(page.getByRole("main").getByText(user.email)).toBeVisible();
     await page.getByRole("button", { name: "Delete my account" }).click();
     await expect(page).toHaveURL((url) => url.pathname === "/" || url.pathname === "/login");
 

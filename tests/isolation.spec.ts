@@ -59,10 +59,30 @@ test.describe("in the browser", () => {
   });
 });
 
+test("a user can still add, edit and delete their own notes", async ({ page }) => {
+  const stamp = Date.now();
+  await logIn(page, bob);
+  await page.getByLabel("Title").fill(`Bob draft ${stamp}`);
+  await page.getByLabel("Note").fill("First version.");
+  await page.getByRole("button", { name: "Add note" }).click();
+
+  await page.getByRole("link", { name: new RegExp(`Bob draft ${stamp}`) }).click();
+  await expect(page.getByLabel("Title")).toHaveValue(`Bob draft ${stamp}`);
+  await page.getByLabel("Title").fill(`Bob final ${stamp}`);
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByRole("link", { name: new RegExp(`Bob final ${stamp}`) })).toBeVisible();
+
+  await page.getByRole("link", { name: new RegExp(`Bob final ${stamp}`) }).click();
+  await expect(page.getByLabel("Title")).toHaveValue(`Bob final ${stamp}`);
+  await page.getByRole("button", { name: "Delete" }).click();
+  await expect(page.getByRole("heading", { name: "Your notes" })).toBeVisible();
+  await expect(page.getByRole("link", { name: new RegExp(`Bob final ${stamp}`) })).toHaveCount(0);
+});
+
 test.describe("straight to the API, skipping the app", () => {
   test("Bob's token cannot read Alice's note", async () => {
     const client = await clientFor(bob);
-    const { data } = await client.from("notes").select("*");
+    const { data } = await client.from("notes").select("*").neq("user_id", bob.id);
     expect(data ?? []).toEqual([]);
   });
 
