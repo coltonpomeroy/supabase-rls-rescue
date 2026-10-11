@@ -93,7 +93,7 @@ pnpm exec playwright install chromium
 pnpm test:e2e           # 11 failures on main, 0 on fix/auth-and-rls
 ```
 
-When switching branches, run `supabase stop && supabase start && supabase db reset`, then
+When switching branches, run `supabase stop --no-backup && supabase start`, then
 `pnpm env:local && pnpm build`, so the database, auth settings and build all match the branch.
 
 To click around: `pnpm dev` and open the URL it prints. Confirmation emails land in the local
