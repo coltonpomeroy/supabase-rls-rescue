@@ -37,6 +37,7 @@ export default function AuthForm({
           type="email"
           autoComplete="email"
           required
+          defaultValue={state?.email}
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2"
         />
       </div>

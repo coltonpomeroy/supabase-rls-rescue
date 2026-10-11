@@ -18,11 +18,12 @@ export async function logIn(_prev: FormState, formData: FormData): Promise<FormS
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
+    // Hand the email back so the form keeps it; never the password.
     if (error.code === "email_not_confirmed") {
-      return { error: "Confirm your email first. Check your inbox for the link we sent." };
+      return { error: "Confirm your email first. Check your inbox for the link we sent.", email };
     }
-    if (error.code === "invalid_credentials") return { error: "Incorrect email or password." };
-    return { error: GENERIC_ERROR };
+    if (error.code === "invalid_credentials") return { error: "Incorrect email or password.", email };
+    return { error: GENERIC_ERROR, email };
   }
   redirect("/notes");
 }
@@ -30,12 +31,12 @@ export async function logIn(_prev: FormState, formData: FormData): Promise<FormS
 export async function signUp(_prev: FormState, formData: FormData): Promise<FormState> {
   const { email, password } = credentials(formData);
   if (!email) return { error: "Enter your email." };
-  if (password.length < 8) return { error: "Use a password of at least 8 characters." };
+  if (password.length < 8) return { error: "Use a password of at least 8 characters.", email };
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) {
-    if (error.code === "weak_password") return { error: "Choose a stronger password." };
+    if (error.code === "weak_password") return { error: "Choose a stronger password.", email };
     if (error.code === "over_email_send_rate_limit") {
       return { error: "Too many sign-up emails just now. Please try again in a few minutes." };
     }
