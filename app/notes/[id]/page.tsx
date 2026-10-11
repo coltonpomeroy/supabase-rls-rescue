@@ -1,40 +1,26 @@
-"use client";
-
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { notFound } from "next/navigation";
+import EditNoteForm from "@/components/EditNoteForm";
+import { requireUser } from "@/lib/auth";
+import type { Note } from "@/lib/types";
 
-export default function NotePage() {
-  const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+type Props = { params: Promise<{ id: string }> };
 
-  useEffect(() => {
-    supabase
-      .from("notes")
-      .select("*")
-      .eq("id", id)
-      .single()
-      .then(({ data }) => {
-        if (data) {
-          setTitle(data.title);
-          setBody(data.body);
-        }
-      });
-  }, [id]);
+export default async function NotePage({ params }: Props) {
+  const { id } = await params;
+  if (!/^\d{1,15}$/.test(id)) notFound();
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault();
-    await supabase.from("notes").update({ title, body }).eq("id", id);
-    router.push("/notes");
-  }
+  const { supabase } = await requireUser();
+  const { data: note, error } = await supabase
+    .from("notes")
+    .select("id, title, body")
+    .eq("id", Number(id))
+    .maybeSingle<Pick<Note, "id" | "title" | "body">>();
+  if (error) throw new Error("Could not load note");
 
-  async function handleDelete() {
-    await supabase.from("notes").delete().eq("id", id);
-    router.push("/notes");
-  }
+  // Someone else's note and a note that does not exist look identical here: Row Level
+  // Security returns no row for either, so the page cannot confirm that an id is in use.
+  if (!note) notFound();
 
   return (
     <div>
@@ -42,43 +28,7 @@ export default function NotePage() {
         &larr; Back to notes
       </Link>
       <h1 className="mt-4 text-2xl font-bold">Edit note</h1>
-      <form onSubmit={handleSave} className="mt-6 space-y-3 rounded-lg border border-slate-200 bg-white p-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium">
-            Title
-          </label>
-          <input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
-          />
-        </div>
-        <div>
-          <label htmlFor="body" className="block text-sm font-medium">
-            Note
-          </label>
-          <textarea
-            id="body"
-            rows={8}
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
-          />
-        </div>
-        <div className="flex gap-3">
-          <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700">
-            Save
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="rounded-md border border-red-300 px-4 py-2 font-medium text-red-700 hover:bg-red-50"
-          >
-            Delete
-          </button>
-        </div>
-      </form>
+      <EditNoteForm note={note} />
     </div>
   );
 }

@@ -1,28 +1,12 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { logOut } from "@/app/auth/actions";
+import { createClient } from "@/lib/supabase/server";
 
-export default function Nav() {
-  const router = useRouter();
-  const [email, setEmail] = useState<string | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setEmail(data.session?.user.email ?? null);
-    });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setEmail(session?.user.email ?? null);
-    });
-    return () => listener.subscription.unsubscribe();
-  }, []);
-
-  async function logout() {
-    await supabase.auth.signOut();
-    router.push("/login");
-  }
+export default async function Nav() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <header className="border-b border-slate-200 bg-white">
@@ -30,7 +14,7 @@ export default function Nav() {
         <Link href="/" className="font-semibold text-slate-900">
           Huddle Notes
         </Link>
-        {email ? (
+        {user ? (
           <div className="flex items-center gap-4 text-sm">
             <Link href="/notes" className="text-slate-700 hover:text-slate-900">
               Notes
@@ -38,10 +22,12 @@ export default function Nav() {
             <Link href="/settings" className="text-slate-700 hover:text-slate-900">
               Settings
             </Link>
-            <span className="hidden text-slate-500 sm:inline">{email}</span>
-            <button onClick={logout} className="rounded-md border border-slate-300 px-3 py-1 hover:bg-slate-50">
-              Log out
-            </button>
+            <span className="hidden text-slate-500 sm:inline">{user.email}</span>
+            <form action={logOut}>
+              <button type="submit" className="rounded-md border border-slate-300 px-3 py-1 hover:bg-slate-50">
+                Log out
+              </button>
+            </form>
           </div>
         ) : (
           <div className="flex items-center gap-4 text-sm">

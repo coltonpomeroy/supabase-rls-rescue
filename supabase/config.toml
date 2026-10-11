@@ -156,7 +156,7 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://localhost:3000"
+site_url = "http://localhost:3210"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
@@ -254,6 +254,12 @@ otp_expiry = 3600
 # enabled = true
 # subject = "Your password has been changed"
 # content_path = "./templates/password_changed_notification.html"
+
+# Confirmation emails link to the app's own /auth/confirm route (see app/auth/confirm).
+# On a hosted project, paste the same template into Authentication > Email Templates.
+[auth.email.template.confirmation]
+subject = "Confirm your Huddle Notes email"
+content_path = "./supabase/templates/confirmation.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
