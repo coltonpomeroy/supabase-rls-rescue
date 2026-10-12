@@ -6,7 +6,7 @@ import { admin, anonClient, createNote, createUser, deleteUser, type TestUser } 
 
 async function startDemo(page: import("@playwright/test").Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the demo" }).click();
+  await page.getByRole("button", { name: "Try the demo" }).first().click();
   await expect(page.getByRole("heading", { name: "Your notes" })).toBeVisible();
 }
 
