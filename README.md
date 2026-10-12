@@ -60,9 +60,11 @@ Same 15 tests, same local Supabase stack, both branches.
 | Deleting an account removes the user and their notes              | pass   | pass |
 | **Total**                                                         | **4 / 15** | **15 / 15** |
 
-The fix branch also has three tests of its own for the demo button
-(`tests/demo.spec.ts`), so its CI run shows 18 passing. They check that a demo visitor's
-throwaway account is isolated like any other user's.
+The fix branch also has five tests of its own for the demo button, so its CI run shows 20
+passing. Three (`tests/demo.spec.ts`) check that a demo visitor's throwaway account is
+isolated like any other user's. Two (`tests/cleanup.spec.ts`) check the scheduled job that
+deletes demo accounts a day after they are created: it removes the account and its notes,
+leaves newer demo accounts and email accounts alone, and cannot be run through the API.
 
 The "straight to the API" tests matter most. They skip the app and talk to Supabase with
 Bob's own login token, which is what an attacker would do, so they pass only if the database
