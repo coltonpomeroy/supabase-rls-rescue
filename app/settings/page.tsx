@@ -1,3 +1,4 @@
+import RescueGuide from "@/components/RescueGuide";
 import DeleteAccountForm from "@/components/DeleteAccountForm";
 import { requireUser } from "@/lib/auth";
 
@@ -6,6 +7,7 @@ export default async function SettingsPage() {
 
   return (
     <div>
+      <RescueGuide page="settings" />
       <h1 className="text-2xl font-bold">Settings</h1>
       <div className="mt-6 rounded-lg border border-slate-200 bg-white p-4">
         <p className="text-sm text-slate-600">Signed in as</p>

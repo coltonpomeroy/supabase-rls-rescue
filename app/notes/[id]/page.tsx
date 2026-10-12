@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import RescueGuide from "@/components/RescueGuide";
 import EditNoteForm from "@/components/EditNoteForm";
 import { requireUser } from "@/lib/auth";
 import type { Note } from "@/lib/types";
@@ -24,6 +25,7 @@ export default async function NotePage({ params }: Props) {
 
   return (
     <div>
+      <RescueGuide page="note" />
       <Link href="/notes" className="text-sm text-indigo-600 hover:underline">
         &larr; Back to notes
       </Link>

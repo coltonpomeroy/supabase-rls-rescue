@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RescueGuide from "@/components/RescueGuide";
 import NewNoteForm from "@/components/NewNoteForm";
 import { requireUser } from "@/lib/auth";
 import type { Note } from "@/lib/types";
@@ -17,6 +18,7 @@ export default async function NotesPage() {
 
   return (
     <div>
+      <RescueGuide page="list" />
       <h1 className="text-2xl font-bold">Your notes</h1>
       <NewNoteForm />
 

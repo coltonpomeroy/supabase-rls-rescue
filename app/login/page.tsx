@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RescueGuide from "@/components/RescueGuide";
 import AuthForm from "@/components/AuthForm";
 import { logIn } from "@/app/auth/actions";
 
@@ -17,6 +18,7 @@ export default async function LoginPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-sm">
+      <RescueGuide page="login" />
       <h1 className="text-2xl font-bold">Log in</h1>
       <AuthForm
         action={logIn}

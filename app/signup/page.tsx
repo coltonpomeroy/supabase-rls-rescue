@@ -1,10 +1,12 @@
 import Link from "next/link";
+import RescueGuide from "@/components/RescueGuide";
 import AuthForm from "@/components/AuthForm";
 import { signUp } from "@/app/auth/actions";
 
 export default function SignupPage() {
   return (
     <div className="mx-auto max-w-sm">
+      <RescueGuide page="signup" />
       <h1 className="text-2xl font-bold">Create your account</h1>
       <AuthForm
         action={signUp}

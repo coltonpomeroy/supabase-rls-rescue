@@ -76,6 +76,35 @@ const fixes = [
   },
 ];
 
+const timeline = [
+  {
+    title: "Read the code and write down what looked wrong",
+    detail: "Every place the app talks to the database or decides who is signed in.",
+  },
+  {
+    title: "Prove each problem with two test accounts",
+    detail:
+      "Signed in as Bob, read, renamed and deleted Alice\u2019s note. Pulled the master key out of the site\u2019s public files and used it. Nothing went in the audit that was not reproduced.",
+  },
+  {
+    title: "Turn each proof into an automated test",
+    detail: "15 tests, run against the original app first: 11 failed, which is the starting line.",
+  },
+  {
+    title: "Fix the cause, not the symptom",
+    detail:
+      "Access rules went into the database itself, the master key moved to the server, and sign-in checks moved off the browser. Each commit explains why it was needed.",
+  },
+  {
+    title: "Run the same tests again",
+    detail: "All 15 pass, including the ones that attack the database directly and skip the app.",
+  },
+  {
+    title: "Hand it over",
+    detail: "An audit, one pull request to review, and a one-page report in plain English for the owner.",
+  },
+];
+
 const deliverables = [
   { label: "Audit", href: `${REPO}/blob/main/docs/AUDIT.md`, detail: "Each issue with how it was reproduced, how serious it is, and what it means in plain English." },
   { label: "Fix, as one pull request", href: `${REPO}/pull/1`, detail: "Every change in one place to review, in small commits that each explain why." },
@@ -119,7 +148,10 @@ export default function Home() {
             See the fix on GitHub
           </a>
         </div>
-        <p className="mt-3 text-sm text-slate-600">The demo needs no email. You get a private, temporary account.</p>
+        <p className="mt-3 text-sm text-slate-600">
+          The demo needs no email. You get a private, temporary account, and every screen explains what it did before
+          the fix and what it does now.
+        </p>
       </header>
 
       <Section id="situation" title="The situation">
@@ -132,6 +164,25 @@ export default function Home() {
           The app in this project was made the same way: generated from a features-only brief and committed with no
           security review, so it has the problems these apps usually have.
         </p>
+      </Section>
+
+      <Section id="story" title="How the rescue went">
+        <ol className="mt-6 space-y-4">
+          {timeline.map((item, index) => (
+            <li key={item.title} className="flex gap-4">
+              <span
+                aria-hidden="true"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white"
+              >
+                {index + 1}
+              </span>
+              <div>
+                <h3 className="font-semibold">{item.title}</h3>
+                <p className="mt-1 text-sm text-slate-700">{item.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </Section>
 
       <Section id="findings" title="What the review found">
